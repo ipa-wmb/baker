@@ -54,7 +54,8 @@ class Detector:
 
         self.current_position_ = (0, 0)
 
-        self.use_random_detections_ = len(dirt_positions_candidates) == 0
+        #self.use_random_detections_ = len(dirt_positions_candidates) == 0
+        self.use_random_detections_ = dirt_positions_candidates == None
         self.dirt_positions_candidates_ = dirt_positions_candidates
 
         self.camera_frame_id_ = 'map'
@@ -174,9 +175,14 @@ if __name__ == "__main__":
         args = rospy.myargv(argv=sys.argv)
 	rospy.init_node('fake_trash_dirt_detector', anonymous=True)
 	# [(-1.619, -1.295, 0)])        
+        #dpc = [(-6.246809806159, -1.33480333451, 0), (-6.4158, -2.92, 0), (-5.37, -0.5, 0), (-6.15, -6.21, 0)]
+        dpc = []   # no dirt
+        #dpc = None # random
 	if '--dirt' in args:
-            dirt_detector = Detector('dirt_detection_server_preprocessing', '/dirt_detection_server_preprocessing/dirt_detector_topic', 1000,
-                dirt_positions_candidates=[(-6.246809806159, -1.33480333451, 0), (-6.4158, -2.92, 0), (-5.37, -0.5, 0), (-6.15, -6.21, 0)])
+            dirt_detector = Detector(
+	        'dirt_detection_server_preprocessing',
+	        '/dirt_detection_server_preprocessing/dirt_detector_topic',
+	        1000, dirt_positions_candidates=dpc)
 		
         if '--trash' in args:
             trash_detector = Detector('trash_detector', 'trash_detector_topic', 1)
