@@ -251,8 +251,7 @@ int main(int argc, char **argv)
 
 	std::cout << "VacuumCleaningModuleInterface started." << std::endl;
 
-	while (ros::ok())
-		ros::spinOnce();
+	ros::spin();
 
 	ifc.stop();
 

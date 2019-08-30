@@ -241,8 +241,9 @@ int main(int argc, char **argv)
 
 	std::cout << "BrushCleaningModuleInterface started." << std::endl;
 
-	while (ros::ok())
-		ros::spinOnce();
+	//while (ros::ok())
+	//	ros::spinOnce();
+	ros::spin();
 
 	ifc.stop();
 
