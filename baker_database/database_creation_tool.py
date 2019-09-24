@@ -74,6 +74,7 @@ class DatabaseCreator():
 		# Segment map
 		# ===========
 
+		print('MapSegmentationGoal')
 		segmentation_goal = MapSegmentationGoal()
 		#segmentation_goal.input_map = self.map_data_.map
 		#segmentation_goal.map_resolution = self.map_data_.map_resolution
@@ -85,10 +86,15 @@ class DatabaseCreator():
 		segmentation_goal.return_format_in_pixel = True
 		segmentation_goal.robot_radius = self.robot_radius_
 		segmentation_goal.room_segmentation_algorithm = self.map_segmentation_algorithm_
+		print('SimpleActionClient')
 		segmentation_client = actionlib.SimpleActionClient(self.map_segmentation_service_str_, MapSegmentationAction)
+		print('wait_for_server')
 		segmentation_client.wait_for_server()
+		print('send_goal')
 		segmentation_client.send_goal(segmentation_goal)
+		print('wait_for_result')
 		segmentation_client.wait_for_result()
+		print('get_result')
 		self.segmentation_result_ = segmentation_client.get_result()
 
 	def createRoomEntries(self):
@@ -190,12 +196,12 @@ class DatabaseCreator():
 			"last_database_save_successful": True,
 			"last_execution_date": self.database_.datetimeToString(datetime(1999, 1, 1)),
 			"last_planning_date": [
-				datetime(1900, 1, 1),
-				datetime(1900, 1, 1)
+				self.database_.datetimeToString(datetime(1900, 1, 1)),
+				self.database_.datetimeToString(datetime(1900, 1, 1))
 			],
 			"progress": [
 				0,
-				datetime(1900, 1, 1)
+				self.database_.datetimeToString(datetime(1900, 1, 1))
 			],
 			"run_count": 0,
 			"planning_offset": 720
@@ -207,9 +213,13 @@ class DatabaseCreator():
 
 
 	def runDatabaseCreation(self):
+		print('createDatabase')
 		self.createDatabase()
+		print('createSegmentedMap')
 		self.createSegmentedMap()
+		print('createRoomEntries')
 		self.createRoomEntries()
+		print('saveDatabase')
 		self.saveDatabase()
 
 
@@ -282,8 +292,11 @@ class DatabaseCreator():
 
 rospy.init_node('database_creation')
 database_creator = DatabaseCreator()
+print('runDatabaseCreation')
 database_creator.runDatabaseCreation()
+print('createRoomBook')
 database_creator.createRoomBook()
+print('createTerritoryPlan')
 database_creator.createTerritoryPlan()
 
 

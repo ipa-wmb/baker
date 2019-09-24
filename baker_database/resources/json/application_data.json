@@ -1,3 +1,14 @@
 {
-    "last_execution_date": null
+    "last_database_save_successful": true, 
+    "last_execution_date": "1999-01-01_00:00", 
+    "last_planning_date": [
+        "1900-01-01_00:00", 
+        "1900-01-01_00:00"
+    ], 
+    "planning_offset": 720, 
+    "progress": [
+        0, 
+        "1900-01-01_00:00"
+    ], 
+    "run_count": 0
 }

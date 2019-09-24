@@ -522,6 +522,7 @@ class Database:
 		#	exit(1)
 
 	def addLogEntry(self, log_element):
+		return #### WMB to avoid errors
 		# Load current log file. If there is not a suiting log file, create one
 		current_logfile_filename = self.getCurrentLogfileName()
 		current_file_name = str(self.log_filepath_) + str(current_logfile_filename)

@@ -41,6 +41,7 @@ if __name__ == '__main__':
 						help="If you want to stop the application (all other arguments are ignored)")
 
 	keys = database_utils.getRoomIds(DATABASE_LOCATION)
+	print('KEYS=', keys)
 	for key in keys:
 		parser.add_argument('-r{}'.format(key), '--room{}'.format(key), type=cleaningMethod, nargs='?', default=-1,
 							help='Cleaning method of room {} (-1: nothing, 0: dry, 1: wet, 2: both). Default -1'.format(key))

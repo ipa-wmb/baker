@@ -16,7 +16,7 @@ remove_lines: false
 
 # dirt threshold (in [0,1])
 # double
-dirt_threshold: 0.65   #0.35 #0.25 #0.09 #0.2  #0.35 #0.5 #0.2
+dirt_threshold: 0.40   #0.35 #0.25 #0.09 #0.2  #0.35 #0.5 #0.2
 
 # checks whether the mean intensity in potential dirt spots is high enough compared to the rest of the spectral residual image
 # double
@@ -30,7 +30,7 @@ dirt_check_std_dev_factor: 3.0   #3.6
 show_warped_original_image: false
 
 # displays the detection results drawn into the color image
-show_dirt_detections: true #true
+show_dirt_detections: false
 
 # displays the color image with the artificial dirt added
 show_color_with_artificial_dirt: false

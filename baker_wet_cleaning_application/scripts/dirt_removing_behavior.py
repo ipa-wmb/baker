@@ -10,7 +10,7 @@ from utils import getCurrentRobotPosition
 from move_base_behavior import MoveBaseBehavior
 import behavior_container
 
-from math import pi, sqrt, sin, cos, atan2
+from math import pi, sqrt, sin, cos, atan2, radians
 from tf.transformations import quaternion_from_euler
 
 class DirtRemovingBehavior(behavior_container.BehaviorContainer):
@@ -60,7 +60,9 @@ class DirtRemovingBehavior(behavior_container.BehaviorContainer):
 
 	@staticmethod
 	def computeBestPoseForRobot(accessible_locations):
-		assert(len(accessible_locations) > 0)
+		#assert(len(accessible_locations) > 0)
+		if len(accessible_locations) <= 0:
+			return None
 
 		(robot_position, robot_rotation, _) = getCurrentRobotPosition()
 		(x_robot, y_robot) = (robot_position[0], robot_position[1])
@@ -106,8 +108,12 @@ class DirtRemovingBehavior(behavior_container.BehaviorContainer):
 		# a^2 = b^2 + c^2 - 2b.c.cos(alpha)
 		# (in our case we use b = sqrt(a^2 - c^2 + 2b.c.cos(alpha)))
 
-		robot_dirt_distance_left = sqrt(length_vacuum_cleaner_arm**2 - distance_robot_vacuum_cleaner**2 + 2*length_vacuum_cleaner_arm*distance_robot_vacuum_cleaner*cos(theta_left))
-		robot_dirt_distance_right = sqrt(length_vacuum_cleaner_arm**2 - distance_robot_vacuum_cleaner**2 + 2*length_vacuum_cleaner_arm*distance_robot_vacuum_cleaner*cos(theta_right))
+		#robot_dirt_distance_left  = sqrt(length_vacuum_cleaner_arm**2 - distance_robot_vacuum_cleaner**2 + 2*length_vacuum_cleaner_arm*distance_robot_vacuum_cleaner*cos(theta_left))
+		#robot_dirt_distance_right = sqrt(length_vacuum_cleaner_arm**2 - distance_robot_vacuum_cleaner**2 + 2*length_vacuum_cleaner_arm*distance_robot_vacuum_cleaner*cos(theta_right))
+
+		robot_dirt_distance_left  = sqrt(length_vacuum_cleaner_arm**2 + distance_robot_vacuum_cleaner**2 + 2*length_vacuum_cleaner_arm*distance_robot_vacuum_cleaner*cos(theta_left))
+		robot_dirt_distance_right = sqrt(length_vacuum_cleaner_arm**2 + distance_robot_vacuum_cleaner**2 + 2*length_vacuum_cleaner_arm*distance_robot_vacuum_cleaner*cos(theta_right))
+
 
 		min_robot_dirt_distance = min(robot_dirt_distance_left, robot_dirt_distance_right)
 
@@ -138,9 +144,10 @@ class DirtRemovingBehavior(behavior_container.BehaviorContainer):
 		best_pose.position.z = 0
 		self.setTheta(best_pose, angle_robot)
 		
-		print(-theta_right, diff_angle, theta_left)
-		print(min_robot_dirt_distance, current_robot_dirt_distance, max_robot_dirt_distance)
-		if min_robot_dirt_distance <= current_robot_dirt_distance and current_robot_dirt_distance <= max_robot_dirt_distance and -theta_right <= diff_angle and diff_angle <= theta_left:
+		print('dirt angles:', -theta_right, diff_angle, theta_left)
+		print('dirt distances:', min_robot_dirt_distance, current_robot_dirt_distance, max_robot_dirt_distance)
+		#if min_robot_dirt_distance <= current_robot_dirt_distance and current_robot_dirt_distance <= max_robot_dirt_distance and -theta_right <= diff_angle and diff_angle <= theta_left:
+		if current_robot_dirt_distance <= min_robot_dirt_distance and -theta_right <= diff_angle and diff_angle <= theta_left:
 			best_robot_angle = angle_robot
 			self.setTheta(best_pose, best_robot_angle)
 			#elif diff_angle <= 0: # WARNING - ??
@@ -173,8 +180,10 @@ class DirtRemovingBehavior(behavior_container.BehaviorContainer):
 		
 		dx = -x_vacuum + self.dirt_position_.x
 		dy = -y_vacuum + self.dirt_position_.y
+		offset = radians(30)
 
-		angle_vacuum_dirt = atan2(dy, dx) - theta # between -pi and +pi
+		#angle_vacuum_dirt = atan2(dy, dx) - theta # between -pi and +pi
+		angle_vacuum_dirt = self.normalize(atan2(dy, dx) - theta + offset) # between -pi and +pi
 
 		request = CleanPatternRequest()
 		print('vacuum angle', angle_vacuum_dirt*180/pi, dx, dy)
@@ -217,6 +226,8 @@ class DirtRemovingBehavior(behavior_container.BehaviorContainer):
 		not_moved = True
 		while not_moved:
 			best_pose3d = self.computeBestPose()#ForRobot()#accessible_poses2d)
+			if best_pose3d == None:
+				return
 			if self.handleInterrupt() >= 1:
 				return
 

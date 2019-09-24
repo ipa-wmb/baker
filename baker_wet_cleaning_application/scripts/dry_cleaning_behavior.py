@@ -185,7 +185,7 @@ class DryCleaningBehavior(AbstractCleaningBehavior):
 			return
 
 		self.initAndStartCoverageMonitoring()
-
+		print('########## in executeCustomBehaviorInRoomId')
 		while len(path) > 0:
 			self.startCoverageMonitoring()
 			(self.detected_trashs_, self.detected_dirts_) = ([], [])
@@ -194,6 +194,7 @@ class DryCleaningBehavior(AbstractCleaningBehavior):
 				Thread(target=self.callTriggerServiceTmp, args=(srv.START_TRASH_DETECTOR_SERVICE_STR,)).start()
 
 			if DryCleaningBehavior.containsDirtTask(cleaning_tasks):
+				print('############ START_DIRT_DETECTOR_SERVICE')
 				Thread(target=self.callTriggerServiceTmp, args=(srv.START_DIRT_DETECTOR_SERVICE_STR,)).start()
 
 			room_map_data = self.database_handler_.database_.getRoomById(room_id).room_map_data_

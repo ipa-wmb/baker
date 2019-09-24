@@ -30,6 +30,7 @@ class WetCleaningBehavior(AbstractCleaningBehavior):
 	# Method for setting parameters for the behavior
 	def setParameters(self, database_handler, sequencing_result, room_information_in_meter, mapping, robot_frame_id,
 					  robot_radius, coverage_radius, field_of_view, field_of_view_origin, use_cleaning_device):
+		print('############ VIEW:', field_of_view, field_of_view_origin)
 		self.setCommonParameters(
 			database_handler=database_handler,
 			sequencing_result=sequencing_result,
@@ -76,6 +77,7 @@ class WetCleaningBehavior(AbstractCleaningBehavior):
 		thread_move_to_the_room.start()
 
 		path = self.computeCoveragePath(room_id=room_id)
+		print('######### PATH:', path)
 
 		if len(path) == 0 or self.handleInterrupt() >= 1:
 			return

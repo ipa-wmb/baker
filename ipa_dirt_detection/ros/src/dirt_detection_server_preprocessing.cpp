@@ -68,6 +68,9 @@ IpaDirtDetectionPreprocessing::ClientPreprocessing::ClientPreprocessing(ros::Nod
 	dynamic_reconfigure_server_.setCallback(dynamic_reconfigure_callback_type);
 
 	// wait for server to start
+	ROS_INFO("########################################");
+	ROS_INFO("########################################");
+	ROS_INFO("########################################");
 	ROS_INFO("Starting client. Waiting for server of '/ipa_dirt_detection_action' to start.");
 	dirt_detection_client_.waitForServer();
 
@@ -87,6 +90,9 @@ IpaDirtDetectionPreprocessing::ClientPreprocessing::ClientPreprocessing(ros::Nod
 	activate_dirt_detection_service_server_ = node_handle_.advertiseService("activate_detection", &IpaDirtDetectionPreprocessing::ClientPreprocessing::activateDirtDetection, this);
 	deactivate_dirt_detection_service_server_ = node_handle_.advertiseService("deactivate_detection", &IpaDirtDetectionPreprocessing::ClientPreprocessing::deactivateDirtDetection, this);
 
+	ROS_INFO("########################################");
+	ROS_INFO("########################################");
+	ROS_INFO("########################################");
 	std::cout << "Dirt detection preprocessing initialized." << std::endl;
 }
 
@@ -168,7 +174,7 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
 	pcl::fromROSMsg(*point_cloud2_rgb_msg, *input_cloud); //conversion Ros message->Pcl point cloud
 	//std::cout << input_cloud->size() << std::endl;
-	std::cout << "Time for data preparation: " << tim.getElapsedTimeInMilliSec() << "ms." << std::endl;
+	//std::cout << "Time for data preparation: " << tim.getElapsedTimeInMilliSec() << "ms." << std::endl;
 	tim.start();
 
 	// find ground plane
@@ -182,8 +188,8 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 			plane_model.values[i] = floor_plane_model_[i];
 	}
 	bool found_plane = planeSegmentation(input_cloud, point_cloud2_rgb_msg->header, plane_color_image, plane_mask, plane_model, floor_plane_inlier_distance_, transformMapCamera);
-	std::cout << "Plane model: " << plane_model.values[0] << ", " << plane_model.values[1] << ", "  << plane_model.values[2] << ", " << plane_model.values[3] << std::endl;
-	std::cout << "Time for plane segmentation: " << tim.getElapsedTimeInMilliSec() << "ms." << std::endl;
+	//std::cout << "Plane model: " << plane_model.values[0] << ", " << plane_model.values[1] << ", "  << plane_model.values[2] << ", " << plane_model.values[3] << std::endl;
+	//std::cout << "Time for plane segmentation: " << tim.getElapsedTimeInMilliSec() << "ms." << std::endl;
 	tim.start();
 
 	if (!found_plane)
@@ -235,7 +241,7 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 			plane_mask_warped = plane_mask;
 		}
 
-		std::cout << "Time for image warp: " << tim2.getElapsedTimeInMilliSec() << "ms." << std::endl;
+		//std::cout << "Time for image warp: " << tim2.getElapsedTimeInMilliSec() << "ms." << std::endl;
 		tim2.start();
 
 		if (debug_["show_plane_color_image"])
@@ -259,7 +265,7 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 		cv_image.toImageMsg(goal.plane_mask_warped);
 
 		//sending goal from this client to the server
-		std::cout << "=======================================================\nSending GOAL from client to server." << std::endl;
+		//std::cout << "=======================================================\nSending GOAL from client to server." << std::endl;
 		dirt_detection_client_.sendGoal(goal);
 
 		//wait for the server to take action and deliver a result
@@ -284,7 +290,7 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 //		std::cout << "=======================================================" << std::endl;
 //		std::cout << "Received RESULT from server.\n" << std::endl;
 		const size_t nb_detections = dirt_detection_client_.getResult()->dirt_detections.size();
-		std::cout << "Number detections: " << nb_detections << std::endl;
+		//std::cout << "Number detections: " << nb_detections << std::endl;
 
 
 		cob_object_detection_msgs::DetectionArray detected_dirts_to_publish;
@@ -295,6 +301,7 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 		{
 			// todo: rescale dirt detections with 1./image_scaling_
 			const baker_msgs::RotatedRect& detection = dirt_detection_client_.getResult()->dirt_detections[i];
+			//std::cout << detection << '\n';
 			const cv::Rect dirt_warped = cv::RotatedRect(cv::Point2f(detection.center_x*1./image_scaling_, detection.center_y*1./image_scaling_),
 					cv::Size2f(detection.width*1./image_scaling_, detection.height*1./image_scaling_), detection.angle).boundingRect();
 
@@ -371,9 +378,9 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 		//todo: publish coordinates and rects
 		dirt_detected_.publish(detected_dirts_to_publish);
 
-		std::cout << "Time for dirt detection excluding image warping: " << tim2.getElapsedTimeInMilliSec() << "ms." << std::endl;
+		//std::cout << "Time for dirt detection excluding image warping: " << tim2.getElapsedTimeInMilliSec() << "ms." << std::endl;
 	}
-	std::cout << "Time for dirt detection: " << tim.getElapsedTimeInMilliSec() << "ms." << std::endl;
+	//std::cout << "Time for dirt detection: " << tim.getElapsedTimeInMilliSec() << "ms." << std::endl;
 
 	// todo: publish detections
 //	cv_bridge::CvImage cv_ptr;
@@ -381,7 +388,7 @@ void IpaDirtDetectionPreprocessing::ClientPreprocessing::preprocessingCallback(c
 //	cv_ptr.encoding = "bgr8";
 //	dirt_detection_image_pub_.publish(cv_ptr.toImageMsg());
 
-	ROS_INFO("Finished IpaDirtDetectionSpectral successfully.\n"); // no it's not finished here
+	//ROS_INFO("Finished IpaDirtDetectionSpectral successfully.\n"); // no it's not finished here
 }
 
 //See header for explanation

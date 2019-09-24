@@ -54,7 +54,12 @@
         name="fake_trash_dirt_detector" output="screen" respawn="true" respawn_delay="2" args="--trash"/>
 
         <!--start real dirt detector -->
+	<!--
         <include file="$(find ipa_dirt_detection)/ros/launch/dirt_detection_spectral.launch">
+            <arg name="colored_point_cloud_topic" value="/camera2_pcl"/>
+        </include>
+	-->
+        <include file="$(find ipa_dirt_detection)/ros/launch/dirt_detection_ml.launch">
             <arg name="colored_point_cloud_topic" value="/camera2_pcl"/>
         </include>
     </group>
