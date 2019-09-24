@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="colored_point_cloud_topic" default="/camera/depth_registered/points"/>
+	<node pkg="ipa_dirt_detection" ns="dirt_detection_server_spectral" type="dirt_detection_server_spectral" name="dirt_detection_server_spectral" output="screen" >
+		<rosparam command="load" file="$(find ipa_dirt_detection)/ros/launch/dirt_detection_server_spectral_params.yaml"/>
+	</node>
+</launch>
